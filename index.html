@@ -1,1 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <script>
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
 
+            const response = await fetch('https://your-pythonanywhere-app/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                alert("File uploaded successfully");
+                listFiles(); // Refresh file list after upload
+            } else {
+                alert("Failed to upload file");
+            }
+        }
+
+        async function listFiles() {
+            const response = await fetch('https://your-pythonanywhere-app/files');
+            const files = await response.json();
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            files.forEach(file => {
+                const fileItem = document.createElement('li');
+                fileItem.innerHTML = `<a href="https://your-pythonanywhere-app/download/${file[0]}">${file[1]}</a>`;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        window.onload = function() {
+            listFiles(); // Load file list when the page loads
+        }
+    </script>
+</head>
+<body>
+    <h1>File Upload</h1>
+    <input type="file" id="fileInput">
+    <button onclick="uploadFile()">Upload</button>
+
+    <h2>Available Files</h2>
+    <ul id="fileList">
+        <!-- Files will be listed here -->
+    </ul>
+</body>
+</html>
